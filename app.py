@@ -258,6 +258,22 @@ class Ui_MainWindow(object):
         self.logoImg.setEnabled(False)
         self.logoImg.setGeometry(QRect(10, 10, 191, 191))
         self.logoImg.setMinimumSize(QSize(162, 0))
+        self.widget = QWidget(self.tab_2)
+        self.widget.setObjectName(u"widget")
+        self.widget.setGeometry(QRect(10, 220, 211, 16))
+        self.horizontalLayout_13 = QHBoxLayout(self.widget)
+        self.horizontalLayout_13.setObjectName(u"horizontalLayout_13")
+        self.horizontalLayout_13.setContentsMargins(0, 0, 0, 0)
+        self.label_11 = QLabel(self.widget)
+        self.label_11.setObjectName(u"label_11")
+
+        self.horizontalLayout_13.addWidget(self.label_11)
+
+        self.vv = QLabel(self.widget)
+        self.vv.setObjectName(u"vv")
+
+        self.horizontalLayout_13.addWidget(self.vv)
+
         self.tabWidget.addTab(self.tab_2, "")
 
         self.horizontalLayout_9.addWidget(self.tabWidget)
@@ -310,11 +326,13 @@ class Ui_MainWindow(object):
 "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; t"
                         "ext-indent:0px;\"><span style=\" font-size:14pt;\">Github:github.com/hengshizhi/LstCodeGuanli</span></p>\n"
 "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:14pt;\">\u4f5c\u8005\u535a\u5ba2\uff1awww.df100.ltd</span></p>\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:14pt;\">Help\uff1a\u5f85\u5b9a</span></p>\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:14pt;\">\u7248\u672c\uff1a1.0</span></p></body></html>", None))
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:14pt;\">Help\uff1a\u5f85\u5b9a</span></p></body></html>", None))
         self.logoImg.setText(QCoreApplication.translate("MainWindow", u"logo                       ", None))
+        self.label_11.setText(QCoreApplication.translate("MainWindow", u"\u5f53\u524d\u7248\u672c\u53f7\uff1a", None))
+        self.vv.setText("")
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_2), QCoreApplication.translate("MainWindow", u"\u5173\u4e8e", None))
     # retranslateUi
+
 
 
 
@@ -453,7 +471,10 @@ def All_Dict(path,wwwroot='/mnt/'):
 import json
 from PySide2.QtWidgets import QMessageBox
 from PySide2.QtWidgets import QApplication,QMainWindow
-
+from urllib.request import urlopen
+from threading import Thread
+vv = b'1.1'
+vvstr = '1.1'
 # path = R'C:\Users\Administrator\AppData\Roaming\Code\User\snippets'
 # yvyan = 'javascript,typescript'
 # config.data['vscodeDMDpath'] is path
@@ -524,12 +545,35 @@ class MainWindow(QMainWindow):
         self.按钮绑定()
         self.刷新默认值()
         self.ui.codePdList.itemSelectionChanged.connect(self.选中列表项)
-
+        self.ui.vv.setText(vvstr)
         self.ui.morenyvyan.textChanged.connect(self.morenyvyan)
         self.ui.vscodeDMDpath.textChanged.connect(self.vscodeDMDpath)
         self.ui.lci_session_key.textChanged.connect(self.lci_session_key)
         self.ui.sou.textChanged.connect(self.搜索)
         self.logoimg()
+        self.更新提醒()
+    def vqingqiu(self):
+        from PySide2.QtWidgets import QInputDialog,QLineEdit
+
+        myURL = urlopen("http://lstcodeguanli.df100.ltd/v.php")
+        v = myURL.read()
+        print(v)
+        if (v != vv):
+            title, okPressed = QInputDialog.getText(
+                self, 
+                "是否安装最新版本",
+                "如果需要更新请运行./updater.exe",
+                QLineEdit.Normal,
+                "")
+            if okPressed:
+                os.system('./updater.exe')
+    def 更新提醒(self):
+        # 返回值分别是输入数据 和 是否点击了 OK 按钮（True/False）
+        thread = Thread(target = self.vqingqiu,
+                        args= ()
+                        )
+        thread.start()
+
     def morenyvyan(self):
         '''默认语言设置'''
         config.data['morenyvyan'] = self.ui.morenyvyan.text()
